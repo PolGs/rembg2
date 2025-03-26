@@ -5,6 +5,7 @@ import subprocess
 from flask import Flask, request, jsonify, render_template, send_from_directory
 from PIL import Image
 import logging
+from rembg import remove  # Import the remove function directly
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -48,48 +49,28 @@ def remove_background():
         logger.error("Empty filename")
         return jsonify({'error': 'No image selected'}), 400
     
-    # Save the uploaded file temporarily
-    input_path = os.path.join(UPLOAD_FOLDER, file.filename)
-    file.save(input_path)
-    logger.debug(f"Saved input file to {input_path}")
-    
-    # Output path for processed image
-    filename, ext = os.path.splitext(file.filename)
-    output_path = os.path.join(UPLOAD_FOLDER, f"{filename}_nobg{ext}")
-    
     try:
-        # Use rembg CLI with the -i option as requested
-        logger.debug(f"Running rembg command: rembg i {input_path} {output_path}")
-        result = subprocess.run(['rembg', 'i', input_path, output_path], check=True, capture_output=True)
-        logger.debug(f"rembg command output: {result.stdout.decode() if result.stdout else 'No stdout'}")
+        # Read the input image
+        input_image = Image.open(file.stream)
+        logger.debug(f"Loaded input image: {input_image.format}, size: {input_image.size}")
         
-        if not os.path.exists(output_path):
-            logger.error(f"Output file not created at {output_path}")
-            return jsonify({'error': 'Failed to process image - output file not created'}), 500
-            
-        # Read the processed image and convert to base64
-        with open(output_path, 'rb') as img_file:
-            img_data = img_file.read()
-            b64_img = base64.b64encode(img_data).decode('utf-8')
+        # Use rembg Python API to remove background
+        logger.debug("Removing background with rembg Python API")
+        output_image = remove(input_image)
+        logger.debug("Background removal completed")
         
+        # Convert to bytes and encode as base64
+        img_byte_arr = io.BytesIO()
+        output_image.save(img_byte_arr, format=input_image.format if input_image.format else 'PNG')
+        img_byte_arr.seek(0)
+        
+        b64_img = base64.b64encode(img_byte_arr.read()).decode('utf-8')
         logger.debug("Successfully encoded output image to base64")
-        
-        # Clean up temporary files
-        if os.path.exists(input_path):
-            os.remove(input_path)
-        if os.path.exists(output_path):
-            os.remove(output_path)
         
         return jsonify({'image': b64_img})
     
     except Exception as e:
         logger.exception(f"Error processing image: {str(e)}")
-        # Clean up in case of errors
-        if os.path.exists(input_path):
-            os.remove(input_path)
-        if os.path.exists(output_path):
-            os.remove(output_path)
-        
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/batch-process', methods=['POST'])
@@ -107,52 +88,28 @@ def batch_process():
         if file.filename == '':
             continue
         
-        # Save the uploaded file temporarily
-        input_path = os.path.join(UPLOAD_FOLDER, file.filename)
-        file.save(input_path)
-        logger.debug(f"Saved input file to {input_path}")
-        
-        # Output path for processed image
-        filename, ext = os.path.splitext(file.filename)
-        output_path = os.path.join(UPLOAD_FOLDER, f"{filename}_nobg{ext}")
-        
         try:
-            # Use rembg CLI with the -i option
-            logger.debug(f"Running rembg command: rembg i {input_path} {output_path}")
-            result = subprocess.run(['rembg', 'i', input_path, output_path], check=True, capture_output=True)
+            # Read the input image
+            input_image = Image.open(file.stream)
+            logger.debug(f"Processing {file.filename}: {input_image.format}, size: {input_image.size}")
             
-            if not os.path.exists(output_path):
-                logger.error(f"Output file not created at {output_path}")
-                results.append({
-                    'original_name': file.filename,
-                    'error': 'Failed to process image - output file not created'
-                })
-                continue
-                
-            # Read the processed image and convert to base64
-            with open(output_path, 'rb') as img_file:
-                img_data = img_file.read()
-                b64_img = base64.b64encode(img_data).decode('utf-8')
+            # Use rembg Python API to remove background
+            output_image = remove(input_image)
+            
+            # Convert to bytes and encode as base64
+            img_byte_arr = io.BytesIO()
+            output_image.save(img_byte_arr, format=input_image.format if input_image.format else 'PNG')
+            img_byte_arr.seek(0)
+            
+            b64_img = base64.b64encode(img_byte_arr.read()).decode('utf-8')
             
             results.append({
                 'original_name': file.filename,
                 'image': b64_img
             })
-            
-            # Clean up temporary files
-            if os.path.exists(input_path):
-                os.remove(input_path)
-            if os.path.exists(output_path):
-                os.remove(output_path)
                 
         except Exception as e:
             logger.exception(f"Error processing image {file.filename}: {str(e)}")
-            # Clean up in case of errors
-            if os.path.exists(input_path):
-                os.remove(input_path)
-            if os.path.exists(output_path):
-                os.remove(output_path)
-                
             results.append({
                 'original_name': file.filename,
                 'error': str(e)
