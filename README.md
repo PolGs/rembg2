@@ -1,6 +1,7 @@
 # Rembg Web Application
 
 A lightweight, high-performance web application for background removal using [rembg](https://github.com/danielgatis/rembg).
+![image](https://github.com/user-attachments/assets/f269e873-b75f-4054-a4db-e6bbc1369def)
 
 ## Features
 
