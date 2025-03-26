@@ -16,6 +16,10 @@ COPY . .
 
 RUN mkdir -p app/uploads
 
+# Make sure uploads directory has correct permissions
+RUN chmod 777 app/uploads
+
 EXPOSE 5000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app.app:app"] 
+# Use environment variable for bind address to allow overrides
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--log-level", "debug", "--timeout", "120", "app.app:app"] 

@@ -130,7 +130,12 @@ document.addEventListener('DOMContentLoaded', () => {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.error) {
                 alert('Error: ' + data.error);
@@ -142,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while processing the image.');
+            alert('An error occurred while processing the image: ' + error.message);
         })
         .finally(() => {
             loading.classList.add('hidden');
@@ -200,7 +205,12 @@ document.addEventListener('DOMContentLoaded', () => {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.error) {
                 alert('Error: ' + data.error);
@@ -211,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while processing the images.');
+            alert('An error occurred while processing the images: ' + error.message);
         })
         .finally(() => {
             loading.classList.add('hidden');

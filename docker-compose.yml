@@ -9,6 +9,11 @@ services:
     environment:
       - FLASK_ENV=production
     restart: unless-stopped
+    networks:
+      - rembg-network
+    # Expose port explicitly to host for debugging
+    ports:
+      - "5000:5000"
 
   frontend:
     image: nginx:alpine
@@ -21,4 +26,10 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - backend
-    restart: unless-stopped 
+    restart: unless-stopped
+    networks:
+      - rembg-network
+
+networks:
+  rembg-network:
+    driver: bridge 
