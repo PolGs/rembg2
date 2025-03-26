@@ -61,7 +61,8 @@ def remove_background():
         
         # Convert to bytes and encode as base64
         img_byte_arr = io.BytesIO()
-        output_image.save(img_byte_arr, format=input_image.format if input_image.format else 'PNG')
+        # Always save as PNG to preserve transparency
+        output_image.save(img_byte_arr, format='PNG')
         img_byte_arr.seek(0)
         
         b64_img = base64.b64encode(img_byte_arr.read()).decode('utf-8')
@@ -98,7 +99,8 @@ def batch_process():
             
             # Convert to bytes and encode as base64
             img_byte_arr = io.BytesIO()
-            output_image.save(img_byte_arr, format=input_image.format if input_image.format else 'PNG')
+            # Always save as PNG to preserve transparency
+            output_image.save(img_byte_arr, format='PNG')
             img_byte_arr.seek(0)
             
             b64_img = base64.b64encode(img_byte_arr.read()).decode('utf-8')
