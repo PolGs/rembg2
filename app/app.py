@@ -25,7 +25,7 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'upload
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Pocketbase URL
-POCKETBASE_URL = 'http://pocketbase:8090'
+POCKETBASE_URL = 'http://rembg-pocketbase-new:8090'
 
 # Enable CORS for debugging
 @app.after_request

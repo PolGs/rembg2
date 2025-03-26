@@ -32,9 +32,9 @@ services:
       
   pocketbase:
     image: ghcr.io/muchobien/pocketbase:latest
-    container_name: rembg-pocketbase
+    container_name: rembg-pocketbase-new
     volumes:
-      - ./pb_data:/pb_data
+      - pocketbase_data_new:/pb_data
     restart: unless-stopped
     ports:
       - "8090:8090"
@@ -43,4 +43,7 @@ services:
 
 networks:
   rembg-network:
-    driver: bridge 
+    driver: bridge
+
+volumes:
+  pocketbase_data_new: 
