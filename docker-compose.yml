@@ -29,6 +29,17 @@ services:
     restart: unless-stopped
     networks:
       - rembg-network
+      
+  pocketbase:
+    image: ghcr.io/muchobien/pocketbase:latest
+    container_name: rembg-pocketbase
+    volumes:
+      - ./pb_data:/pb_data
+    restart: unless-stopped
+    ports:
+      - "8090:8090"
+    networks:
+      - rembg-network
 
 networks:
   rembg-network:
