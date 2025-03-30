@@ -30,6 +30,10 @@ services:
     networks:
       - rembg-network
       - frontend
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.frontend.rule=Host(`rembg.docker.kinetic.net`)
+      - traefik.http.services.frontend.loadbalancer.server.port=81
   pocketbase:
     image: ghcr.io/muchobien/pocketbase:latest
     container_name: rembg-pocketbase-new
@@ -41,6 +45,10 @@ services:
     networks:
       - rembg-network
       - frontend
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.pocketbase.rule=Host(`pocketbase.docker.kinetic.net`)
+      - traefik.http.services.pocketbase.loadbalancer.server.port=8090
 
 networks:
   rembg-network:
