@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Auth state
     let currentUser = null;
-    const POCKETBASE_URL = 'http://localhost:8090'; // This is the direct URL for browser access
+    const POCKETBASE_URL = 'http://docker.kinetic.net:8090'; // This is the direct URL for browser access
     
     // Check for existing token in localStorage
     const checkAuth = async () => {
