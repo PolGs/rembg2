@@ -29,7 +29,7 @@ services:
     restart: unless-stopped
     networks:
       - rembg-network
-      
+      - frontend
   pocketbase:
     image: ghcr.io/muchobien/pocketbase:latest
     container_name: rembg-pocketbase-new
@@ -40,10 +40,13 @@ services:
       - "8090:8090"
     networks:
       - rembg-network
+      - frontend
 
 networks:
   rembg-network:
     driver: bridge
+  frontend:
+    external: true
 
 volumes:
   pocketbase_data_new: 
