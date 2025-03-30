@@ -104,6 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const form = e.target;
         const email = form.email.value;
+        const identity = email;
         const password = form.password.value;
         const errorElem = document.getElementById('login-error');
         
@@ -113,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ identity, password })
             });
             
             const data = await response.json();
@@ -141,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const form = e.target;
         const username = form.username.value;
         const email = form.email.value;
+        const identity = email;
         const password = form.password.value;
         const passwordConfirm = form.passwordConfirm.value;
         const errorElem = document.getElementById('register-error');
@@ -174,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({ identity, password })
                 });
                 
                 const loginData = await loginResponse.json();
