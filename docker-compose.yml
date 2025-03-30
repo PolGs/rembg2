@@ -19,7 +19,7 @@ services:
     image: nginx:alpine
     container_name: rembg-frontend
     ports:
-      - "80:80"
+      - "81:80"
     volumes:
       - ./app/templates:/usr/share/nginx/html
       - ./app/static:/usr/share/nginx/html/static
